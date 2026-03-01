@@ -51,9 +51,7 @@ export default function Navbar() {
                         {/* Centered Logo */}
                         <Link href="/" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                             <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-[#1e2643] rounded-full flex items-center justify-center">
-                                    <span className="text-[#FEE6A9] text-xs font-serif italic">C</span>
-                                </div>
+                                <img src="/logo.png" alt="CHHAAPAYA" className="w-10 h-10 object-contain" />
                                 <h1 className="text-2xl font-light text-[#1e2643] tracking-[0.3em] uppercase serif">
                                     CHHAAPAYA
                                 </h1>

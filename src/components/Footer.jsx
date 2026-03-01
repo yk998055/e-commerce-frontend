@@ -11,9 +11,7 @@ export default function Footer() {
                     {/* Brand Section */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-[#1e2643] flex items-center justify-center">
-                                <span className="text-[#FEE6A9] text-xs font-bold">C</span>
-                            </div>
+                            <img src="/logo.png" alt="CHHAAPAYA" className="w-10 h-10 object-contain" />
                             <span className="text-2xl font-light tracking-tighter serif">CHHAAPAYA</span>
                         </div>
                         <p className="text-[#1e2643]/60 text-sm leading-relaxed serif italic max-w-[200px]">
