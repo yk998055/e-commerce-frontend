@@ -10,9 +10,9 @@ export default function FeaturedCollection() {
                     {/* Left: Large Image */}
                     <div className="w-full lg:w-1/2 aspect-[4/5] overflow-hidden bg-[#F3F0E9] relative group">
                         <img
-                            src="/featured_look.png"
+                            src="https://images.unsplash.com/photo-1610030469915-9a08fa996eec?w=1200"
                             alt="Featured Collection"
-                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                         />
                         <div className="absolute inset-0 border-[1.5rem] border-white/10 group-hover:border-white/20 transition-all duration-700" />
                     </div>

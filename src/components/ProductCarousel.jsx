@@ -130,11 +130,11 @@ export default function ProductCarousel({
 
     // Timer setup
     useEffect(() => {
-        if (!isPaused && products.length > itemsPerView) {
+        if (!isPaused && products.length > 1) {
             timerRef.current = setInterval(nextSlide, autoSlideInterval);
         }
         return () => clearInterval(timerRef.current);
-    }, [isPaused, nextSlide, autoSlideInterval, products.length, itemsPerView]);
+    }, [isPaused, nextSlide, autoSlideInterval, products.length]);
 
     // Handle jump back/forward for infinite loop
     useEffect(() => {

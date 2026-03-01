@@ -56,14 +56,15 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white scroll-smooth">
-      <HeroBanner />
+    <div className="min-h-screen bg-white scroll-smooth flex flex-col gap-0">
+      <HeroBanner products={carouselProducts} />
 
       <ProductCarousel
         products={carouselProducts}
         loading={carouselLoading}
         error={error}
-        title="Top Products"
+        title="Featured Favorites"
+        autoSlideInterval={2500}
       />
 
       <IntroSection />

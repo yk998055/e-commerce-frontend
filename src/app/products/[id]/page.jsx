@@ -44,8 +44,8 @@ export default function ProductDetailPage() {
 
     if (!product) {
         return (
-            <div className="min-h-screen bg-[#FEE6A1] flex items-center justify-center">
-                <div className="text-center p-12 bg-white/30 backdrop-blur-xl rounded-[3rem] border-4 border-[#1e2643] shadow-2xl">
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="text-center p-12 bg-[#FEE6A9] backdrop-blur-xl rounded-[3rem] border-4 border-[#1e2643] shadow-2xl">
                     <h2 className="text-4xl font-black text-[#1e2643] mb-6 tracking-tight">Product Not Found</h2>
                     <Link href="/" className="px-8 py-4 bg-[#1e2643] text-[#FEE6A1] rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#1e2643]/90 transition-all shadow-xl shadow-[#1e2643]/10">
                         Back to Home
@@ -59,7 +59,7 @@ export default function ProductDetailPage() {
     const images = product.images?.length > 0 ? product.images : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800'];
 
     return (
-        <div className="min-h-screen bg-[#FEE6A1] pt-32 pb-20">
+        <div className="min-h-screen bg-white pt-32 pb-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Breadcrumb */}
                 <nav className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-[#1e2643]/40 mb-12 ml-1">
@@ -138,7 +138,7 @@ export default function ProductDetailPage() {
                             </div>
 
                             {/* Price */}
-                            <div className="p-8 rounded-[2rem] bg-white/30 border-2 border-[#1e2643]/5 backdrop-blur-md">
+                            <div className="p-8 rounded-[2rem] bg-[#FEE6A9] border-2 border-[#1e2643]/5 backdrop-blur-md">
                                 <div className="flex items-baseline gap-4 mb-2">
                                     {hasDiscount ? (
                                         <>

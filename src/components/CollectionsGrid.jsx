@@ -5,18 +5,18 @@ import Link from 'next/link';
 const collections = [
     {
         title: 'Festive Edit',
-        image: '/festive_edit.png', // Fallback or user will provide
-        link: '/products?collection=festive'
+        image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800',
+        link: '/products?category=artisan-apparel'
     },
     {
         title: 'New Arrivals',
-        image: '/new_arrivals.png',
-        link: '/products?collection=new'
+        image: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=800',
+        link: '/products?category=hand-blocked-textiles'
     },
     {
         title: 'Best Sellers',
-        image: '/best_sellers.png',
-        link: '/products?collection=best'
+        image: 'https://images.unsplash.com/photo-1534073828943-f801091bb18c?w=800',
+        link: '/products?category=heritage-decor'
     }
 ];
 
