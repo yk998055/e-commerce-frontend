@@ -10,8 +10,10 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                     {/* Brand Section */}
                     <div className="space-y-6">
-                        <div className="flex items-center gap-2">
-                            <img src="/logo.png" alt="CHHAAPAYA" className="w-10 h-10 object-contain" />
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full overflow-hidden border border-[#1e2643]/10">
+                                <img src="/logo.png" alt="CHHAAPAYA" className="w-full h-full object-cover" />
+                            </div>
                             <span className="text-2xl font-light tracking-tighter serif">CHHAAPAYA</span>
                         </div>
                         <p className="text-[#1e2643]/60 text-sm leading-relaxed serif italic max-w-[200px]">

@@ -50,9 +50,11 @@ export default function Navbar() {
 
                         {/* Centered Logo */}
                         <Link href="/" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                            <div className="flex items-center gap-2">
-                                <img src="/logo.png" alt="CHHAAPAYA" className="w-10 h-10 object-contain" />
-                                <h1 className="text-2xl font-light text-[#1e2643] tracking-[0.3em] uppercase serif">
+                            <div className="flex items-center gap-2 md:gap-4">
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border border-[#1e2643]/10 shadow-sm transition-transform duration-500 group-hover:scale-110">
+                                    <img src="/logo.png" alt="CHHAAPAYA" className="w-full h-full object-cover" />
+                                </div>
+                                <h1 className="hidden sm:block text-xl md:text-2xl font-light text-[#1e2643] tracking-[0.3em] uppercase serif">
                                     CHHAAPAYA
                                 </h1>
                             </div>
