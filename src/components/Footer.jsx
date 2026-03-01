@@ -12,9 +12,9 @@ export default function Footer() {
                     <div className="space-y-6">
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full bg-[#1e2643] flex items-center justify-center">
-                                <span className="text-[#FEE6A9] text-xs font-bold">B</span>
+                                <span className="text-[#FEE6A9] text-xs font-bold">C</span>
                             </div>
-                            <span className="text-2xl font-light tracking-tighter serif">BAGH</span>
+                            <span className="text-2xl font-light tracking-tighter serif">CHHAAPAYA</span>
                         </div>
                         <p className="text-[#1e2643]/60 text-sm leading-relaxed serif italic max-w-[200px]">
                             Bringing the age-old crafts of our country to your doorstep.
@@ -56,7 +56,7 @@ export default function Footer() {
 
                 <div className="pt-10 border-t border-[#1e2643]/10 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1e2643]/40">
-                        &copy; {currentYear} BAGH. All rights reserved.
+                        &copy; {currentYear} CHHAAPAYA. All rights reserved.
                     </p>
                     <div className="flex items-center gap-6 opacity-40 grayscale">
                         <span className="text-[10px] font-black tracking-widest uppercase">Amex</span>
