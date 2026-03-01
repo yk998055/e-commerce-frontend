@@ -1,0 +1,59 @@
+'use client';
+
+import Link from 'next/link';
+
+const collections = [
+    {
+        title: 'Festive Edit',
+        image: '/festive_edit.png', // Fallback or user will provide
+        link: '/products?collection=festive'
+    },
+    {
+        title: 'New Arrivals',
+        image: '/new_arrivals.png',
+        link: '/products?collection=new'
+    },
+    {
+        title: 'Best Sellers',
+        image: '/best_sellers.png',
+        link: '/products?collection=best'
+    }
+];
+
+export default function CollectionsGrid() {
+    return (
+        <section className="py-20 bg-white">
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {collections.map((item, idx) => (
+                        <div key={idx} className="group relative aspect-[3/4] overflow-hidden bg-[#F3F0E9]">
+                            {/* Image with hover effect */}
+                            <img
+                                src={item.image}
+                                alt={item.title}
+                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                            />
+
+                            {/* Overlay */}
+                            <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors duration-500" />
+
+                            {/* Content */}
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6">
+                                <h3 className="text-3xl md:text-4xl font-light mb-8 serif tracking-wide text-center drop-shadow-md">
+                                    {item.title}
+                                </h3>
+
+                                <Link
+                                    href={item.link}
+                                    className="px-8 py-3 bg-white text-[#1e2643] text-[10px] font-bold uppercase tracking-[0.4em] transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 shadow-lg"
+                                >
+                                    SHOP NOW
+                                </Link>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+}
