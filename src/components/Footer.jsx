@@ -11,7 +11,7 @@ export default function Footer() {
                     {/* Brand Section */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full overflow-hidden border border-[#1e2643]/10">
+                            <div className="w-12 h-12 aspect-square rounded-full overflow-hidden border border-[#1e2643]/10 bg-white">
                                 <img src="/logo.png" alt="CHHAAPAYA" className="w-full h-full object-cover" />
                             </div>
                             <span className="text-2xl font-light tracking-tighter serif">CHHAAPAYA</span>

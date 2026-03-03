@@ -1,6 +1,6 @@
 // UI Strings — easy to change in one place
 export const SITE_NAME = 'CHHAAPAYA';
-export const SITE_DESCRIPTION = 'Discover premium products at unbeatable prices';
+export const SITE_DESCRIPTION = 'Timeless hand-blocked textiles and artisan heritage crafts.';
 export const HERO_TITLE = 'Elevate Your Lifestyle';
 export const HERO_SUBTITLE = 'Discover curated collections of premium products designed for modern living.';
 export const HERO_CTA = 'Shop Now';

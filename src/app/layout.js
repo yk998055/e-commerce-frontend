@@ -5,8 +5,12 @@ import Footer from '@/components/Footer';
 import FloatingActions from '@/components/FloatingActions';
 
 export const metadata = {
-  title: 'ShopVista — Premium E-Commerce Store',
-  description: 'Discover premium products at unbeatable prices. Quality you can trust, style you deserve.',
+  title: 'CHHAAPAYA — Heritage & Luxury Crafts',
+  description: 'Discover the timeless beauty of hand-blocked textiles and artisan heritage crafts at CHHAAPAYA.',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  }
 };
 
 export default function RootLayout({ children }) {
