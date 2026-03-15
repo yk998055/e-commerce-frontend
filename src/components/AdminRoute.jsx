@@ -17,8 +17,8 @@ export default function AdminRoute({ children }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-                <LoadingSpinner size="lg" text="Verifying Admin Access..." textColor="text-gray-800" />
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <LoadingSpinner size="lg" text="Verifying Admin Access..." textColor="text-[#1e2643]" />
             </div>
         );
     }

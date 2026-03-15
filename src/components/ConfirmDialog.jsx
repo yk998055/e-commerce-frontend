@@ -11,8 +11,8 @@ export default function ConfirmDialog({ open, title, message, onConfirm, onCance
             {/* Dialog */}
             <div className="relative bg-[#FEE6A1] border-4 border-[#1e2643] rounded-[2.5rem] shadow-2xl max-w-md w-full p-10 animate-fadeIn">
                 <div className="flex flex-col items-center text-center">
-                    <div className="w-20 h-20 rounded-[2rem] bg-rose-500/10 border-4 border-rose-500/20 flex items-center justify-center mb-6">
-                        <svg className="w-10 h-10 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <div className="w-20 h-20 rounded-[2rem] bg-[#1e2643]/10 border-4 border-[#1e2643]/20 flex items-center justify-center mb-6">
+                        <svg className="w-10 h-10 text-[#1e2643]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
                         </svg>
                     </div>
@@ -31,7 +31,7 @@ export default function ConfirmDialog({ open, title, message, onConfirm, onCance
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="px-8 py-4 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-rose-500/20"
+                        className="px-8 py-4 rounded-2xl bg-[#1e2643] hover:bg-[#1e2643]/90 text-white text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-[#1e2643]/20"
                     >
                         Yes, Delete
                     </button>

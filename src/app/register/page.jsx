@@ -3,21 +3,28 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { LOGIN_TITLE, LOGIN_SUBTITLE } from '@/lib/constants';
 
-export default function LoginPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+export default function RegisterPage() {
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: ''
+    });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const { login, isAuthenticated, loading: authLoading } = useAuth();
+    const { register, isAuthenticated, loading: authLoading } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
         if (!authLoading && isAuthenticated) {
-            router.push('/admin');
+            router.push('/');
         }
     }, [authLoading, isAuthenticated, router]);
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,14 +32,10 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            const data = await login(email, password);
-            if (data.data.user.role === 'admin') {
-                router.push('/admin');
-            } else {
-                router.push('/');
-            }
+            await register(formData);
+            router.push('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Invalid email or password');
+            setError(err.response?.data?.message || 'Failed to create account. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -47,10 +50,10 @@ export default function LoginPage() {
                 {/* Header Container */}
                 <div className="space-y-6">
                     <h1 className="text-4xl font-normal text-[#1e2643] serif tracking-tight">
-                        Login
+                        Register
                     </h1>
                     <p className="text-[#1e2643] text-[14px] font-normal leading-relaxed">
-                        Please enter your e-mail and password:
+                        Please fill in the information below:
                     </p>
                 </div>
 
@@ -63,34 +66,56 @@ export default function LoginPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-8 text-left">
                     <div className="space-y-4">
+                        {/* First Name Input */}
+                        <div className="relative group">
+                            <input
+                                type="text"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-5 py-4 bg-white border border-[#1e2643]/10 text-[#1e2643] placeholder-[#1e2643] focus:outline-none focus:border-[#1e2643]/30 transition-all font-normal text-[14px]"
+                                placeholder="First name"
+                            />
+                        </div>
+
+                        {/* Last Name Input */}
+                        <div className="relative group">
+                            <input
+                                type="text"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-5 py-4 bg-white border border-[#1e2643]/10 text-[#1e2643] placeholder-[#1e2643] focus:outline-none focus:border-[#1e2643]/30 transition-all font-normal text-[14px]"
+                                placeholder="Last name"
+                            />
+                        </div>
+
                         {/* Email Input */}
                         <div className="relative group">
                             <input
                                 type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
                                 required
                                 className="w-full px-5 py-4 bg-white border border-[#1e2643]/10 text-[#1e2643] placeholder-[#1e2643] focus:outline-none focus:border-[#1e2643]/30 transition-all font-normal text-[14px]"
                                 placeholder="Email"
                             />
                         </div>
 
-                        {/* Password Input with Forgot link inside */}
+                        {/* Password Input */}
                         <div className="relative group">
                             <input
                                 type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
                                 required
                                 className="w-full px-5 py-4 bg-white border border-[#1e2643]/10 text-[#1e2643] placeholder-[#1e2643] focus:outline-none focus:border-[#1e2643]/30 transition-all font-normal text-[14px]"
                                 placeholder="Password"
                             />
-                            <button
-                                type="button"
-                                className="absolute right-5 top-1/2 -translate-y-1/2 text-[12px] text-[#1e2643] hover:underline transition-colors"
-                            >
-                                Forgot password?
-                            </button>
                         </div>
                     </div>
 
@@ -106,22 +131,22 @@ export default function LoginPage() {
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                                     </svg>
-                                    Verifying...
+                                    Creating account...
                                 </>
                             ) : (
-                                'LOGIN'
+                                'CREATE MY ACCOUNT'
                             )}
                         </button>
 
                         <div className="text-center">
                             <p className="text-[13px] text-[#1e2643]">
-                                Don't have an account?{' '}
+                                Already have an account?{' '}
                                 <button
                                     type="button"
-                                    onClick={() => router.push('/register')}
+                                    onClick={() => router.push('/login')}
                                     className="text-[#1e2643] font-bold hover:underline underline-offset-4"
                                 >
-                                    Create one
+                                    Login
                                 </button>
                             </p>
                         </div>

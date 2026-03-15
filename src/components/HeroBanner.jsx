@@ -5,108 +5,102 @@ import Link from 'next/link';
 
 const slides = [
     {
+        id: 'heritage',
         image: 'https://images.unsplash.com/photo-1595991209266-5ff5a3a2f008?w=1600',
         title: 'CHHAAPAYA',
         subtitle: 'heritage | 2024',
         cta: 'EXPLORE NOW',
-        link: '/products?category=artisan-apparel'
+        link: '/products'
     },
     {
-        image: 'https://images.unsplash.com/photo-1610030469915-9a08fa996eec?w=1600',
-        title: 'NAQSH',
-        subtitle: 'hand-crafted | 2024',
-        cta: 'DISCOVER',
-        link: '/products?category=hand-blocked-textiles'
-    }
+        id: 'festive',
+        image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=2070&auto=format&fit=crop',
+        subtitle: 'New Collection',
+        title: 'FESTIVE EDIT',
+        link: '/products?category=Festive'
+    },
 ];
 
-export default function HeroBanner({ products = [] }) {
-    const [current, setCurrent] = useState(0);
-
-    const displaySlides = products.length > 0
-        ? products.slice(0, 5).map(p => ({
-            image: p.images?.[0] || 'https://images.unsplash.com/photo-1595991209266-5ff5a3a2f008?w=1600',
-            title: p.name,
-            subtitle: p.category?.name || 'exclusive',
-            cta: 'SHOP NOW',
-            link: `/products/${p._id}`,
-            price: p.discountPrice || p.price
-        }))
-        : slides;
+export default function HeroBanner() {
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        if (displaySlides.length <= 1) return;
+        setIsMounted(true);
         const timer = setInterval(() => {
-            setCurrent((prev) => (prev + 1) % displaySlides.length);
-        }, 5000);
+            setCurrentSlide((prev) => (prev + 1) % slides.length);
+        }, 6000);
         return () => clearInterval(timer);
-    }, [displaySlides.length]);
+    }, []);
 
     return (
-        <section className="relative w-full h-[95vh] overflow-hidden bg-white">
-            {displaySlides.map((slide, index) => (
+        <section className="relative h-[100vh] mt-20 md:mt-24 w-full overflow-hidden">
+            {slides.map((slide, index) => (
                 <div
-                    key={index}
-                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === current ? 'opacity-100' : 'opacity-0'
-                        }`}
+                    key={slide.id}
+                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
                 >
-                    {/* Image Layer */}
-                    <div className="absolute inset-0">
-                        <img
-                            src={slide.image}
-                            alt={slide.title}
-                            className="w-full h-full object-cover object-center transform scale-100 transition-transform duration-[10000ms] ease-out"
-                            style={index === current ? { transform: 'scale(1.05)' } : {}}
-                        />
-                        {/* Dark Overlay for better text readability if needed, though Bagh is clear */}
-                        <div className="absolute inset-0 bg-black/5" />
-                    </div>
+                    {/* Background Image */}
+                    <div
+                        className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-out ${isMounted && index === currentSlide ? 'scale-100 blur-0' : 'scale-[1.05] blur-sm'}`}
+                        style={{
+                            backgroundImage: `url(${slide.image})`
+                        }}
+                    />
 
-                    {/* Left Bottom: SHOP NOW Button & Info */}
-                    <div className="absolute bottom-24 left-10 md:left-32 z-20 space-y-4">
-                        <div className="space-y-1">
-                            <span className="text-white text-xs font-bold uppercase tracking-[0.4em] drop-shadow-md">
+                    {/* Overlay for better text readability if needed, but BAGH is very clean */}
+                    <div className="absolute inset-0 bg-white/20" />
+
+                    {/* Content */}
+                    <div className="relative h-full flex items-center justify-center text-center px-4">
+                        <div className="max-w-4xl space-y-8">
+                            <span className={`block text-[#1e2643] text-xs md:text-sm font-bold tracking-[0.4em] uppercase transition-all duration-1000 transform ${isMounted && index === currentSlide ? 'translate-y-0 opacity-100 delay-[200ms]' : 'translate-y-8 opacity-0 delay-0'}`}>
                                 {slide.subtitle}
                             </span>
-                            <h3 className="text-white text-3xl md:text-5xl font-light serif drop-shadow-lg max-w-xl leading-tight">
+                            <h2 className={`text-4xl md:text-7xl font-light text-[#1e2643] tracking-[0.1em] serif uppercase transition-all duration-1000 transform ${isMounted && index === currentSlide ? 'translate-y-0 opacity-100 delay-[400ms]' : 'translate-y-12 opacity-0 delay-0'}`}>
                                 {slide.title}
-                            </h3>
+                            </h2>
+                            <div className={`pt-8 transition-all duration-1000 transform ${isMounted && index === currentSlide ? 'translate-y-0 opacity-100 delay-[600ms]' : 'translate-y-12 opacity-0 delay-0'}`}>
+                                <Link
+                                    href={slide.link || '/products'}
+                                    className="inline-block bg-white text-[#1e2643] px-10 py-4 text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-[#FEE6A9] hover:text-[#1e2643] transition-all duration-300 shadow-xl"
+                                >
+                                    {slide.cta || 'Shop Now'}
+                                </Link>
+                            </div>
                         </div>
-                        <Link
-                            href={slide.link}
-                            className="inline-block px-10 py-3 bg-white text-[#1e2643] text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-[#1e2643] hover:text-white transition-all duration-700 shadow-lg"
-                        >
-                            SHOP NOW
-                        </Link>
-                    </div>
-
-                    {/* Right Bottom: Huge SALE Text */}
-                    <div className="absolute bottom-16 right-10 md:right-32 z-20 text-right pointer-events-none select-none">
-                        <h2
-                            className="text-[10rem] md:text-[22rem] font-extralight text-white leading-none tracking-tighter serif opacity-80"
-                            style={{ textShadow: '0 20px 50px rgba(0,0,0,0.05)' }}
-                        >
-                            SALE
-                        </h2>
                     </div>
                 </div>
             ))}
 
-            {/* Slide Indicators - Minimal Dots at Right Bottom */}
-            {displaySlides.length > 1 && (
-                <div className="absolute bottom-16 right-10 md:right-32 flex gap-3 z-30 items-center">
-                    {displaySlides.map((_, i) => (
-                        <button
-                            key={i}
-                            onClick={() => setCurrent(i)}
-                            className={`transition-all duration-500 rounded-full ${i === current
-                                ? 'w-2 h-2 bg-white blur-[0.5px]'
-                                : 'w-2 h-2 bg-transparent border border-white/40 hover:border-white'}`}
-                            aria-label={`Go to slide ${i + 1}`}
-                        />
-                    ))}
-                </div>
-            )}
+            {/* Slide Indicators - Minimal Dots */}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-4 z-20">
+                {slides.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => setCurrentSlide(index)}
+                        className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${index === currentSlide ? 'bg-[#1e2643] scale-125' : 'bg-[#1e2643]/30'}`}
+                    />
+                ))}
+            </div>
+
+            {/* Navigation Arrows - Optional but keeping it minimal */}
+            <button
+                onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+                className="absolute left-8 top-1/2 -translate-y-1/2 p-2 text-[#1e2643]/50 hover:text-[#1e2643] transition-colors hidden md:block"
+            >
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+            </button>
+            <button
+                onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+                className="absolute right-8 top-1/2 -translate-y-1/2 p-2 text-[#1e2643]/50 hover:text-[#1e2643] transition-colors hidden md:block"
+            >
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+            </button>
         </section>
     );
 }

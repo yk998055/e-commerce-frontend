@@ -1,71 +1,89 @@
+'use client';
+
 import Link from 'next/link';
-import { CURRENCY_SYMBOL } from '@/lib/constants';
 
 export default function ProductCard({ product }) {
-    const hasDiscount = product.discountPrice && product.discountPrice < product.price;
-    const discountPercentage = hasDiscount ? Math.round(((product.price - product.discountPrice) / product.price) * 100) : 0;
-    const imgSrc = product.images?.[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600';
+    if (!product) return null;
+
+    // Fallback image if none exists
+    const mainImage = product.images?.[0] || 'https://images.unsplash.com/photo-1595991209266-5ff5a3a2f008?w=800';
+    const hasHoverImage = !!product.images?.[1];
+    const hoverImage = product.images?.[1];
+
+    const price = Number(product.price) || 0;
+    const discountPrice = Number(product.discountPrice) || 0;
+    const hasDiscount = discountPrice > 0 && discountPrice < price;
+
+    const discountPercentage = hasDiscount
+        ? Math.round(((price - discountPrice) / price) * 100)
+        : 0;
 
     return (
-        <Link href={`/products/${product._id}`} className="group block">
-            <div className="bg-[#FEE6A9] border border-[#1e2643]/10 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-1">
-                {/* Image */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-white/50">
+        <div className="group flex flex-col items-center text-center">
+            {/* Image Container */}
+            <Link
+                href={`/products/${product._id}`}
+                className="relative w-full aspect-[3/4] overflow-hidden bg-gray-50 mb-6"
+            >
+                <img
+                    src={mainImage}
+                    alt={product.name || 'Product'}
+                    className={`w-full h-full object-cover transition-opacity duration-700 ${hasHoverImage ? 'group-hover:opacity-0' : ''}`}
+                />
+                {hasHoverImage && (
                     <img
-                        src={imgSrc}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-out"
+                        src={hoverImage}
+                        alt={`${product.name || 'Product'} hover`}
+                        className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100"
                     />
+                )}
 
-                    {/* Badges */}
-                    {hasDiscount && (
-                        <div className="absolute top-4 left-4 px-2 py-1 bg-rose-500 text-white text-[10px] font-bold uppercase tracking-widest rounded-sm shadow-md">
+                {/* Badges */}
+                <div className="absolute top-4 left-0 flex flex-col gap-2 z-10">
+                    {discountPercentage > 0 && (
+                        <span className="bg-[#FEE6A9] text-[#1e2643] text-[9px] font-bold px-3 py-1 uppercase tracking-widest">
                             {discountPercentage}% OFF
-                        </div>
-                    )}
-                    {product.isFeatured && (
-                        <div className="absolute top-4 right-4 px-2 py-1 bg-[#1e2643] text-[#FEE6A9] text-[10px] font-bold uppercase tracking-widest rounded-sm shadow-md">
-                            Featured
-                        </div>
-                    )}
-
-                    {/* Hover overlay with serif text */}
-                    <div className="absolute inset-0 bg-[#1e2643]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                        <span className="px-6 py-2 bg-white/90 backdrop-blur-md text-[#1e2643] text-xs font-bold uppercase tracking-[0.2em] border border-[#1e2643]/10 shadow-xl">
-                            View Details
                         </span>
-                    </div>
+                    )}
+                    {product.isNew && (
+                        <span className="bg-[#c8a87f] text-[#1e2643] text-[9px] font-bold px-3 py-1 uppercase tracking-widest">
+                            New
+                        </span>
+                    )}
                 </div>
 
-                {/* Info */}
-                <div className="p-6 text-center">
-                    {product.category?.name && (
-                        <span className="text-[9px] font-bold text-[#1e2643]/40 uppercase tracking-[0.3em] block mb-2">
-                            {product.category.name}
-                        </span>
-                    )}
-                    <h3 className="text-[#1e2643] font-bold text-base mb-3 transition-colors duration-300 line-clamp-1 group-hover:text-[#1e2643]/80">
+                {/* Quick Add Overlay */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-20">
+                    <button className="w-full bg-white text-[#1e2643] py-3 text-[10px] font-bold uppercase tracking-widest shadow-xl hover:bg-[#FEE6A9] hover:text-[#1e2643] transition-colors">
+                        Quick Add
+                    </button>
+                </div>
+            </Link>
+
+            {/* Product Info */}
+            <div className="space-y-2 px-2">
+                <Link href={`/products/${product._id}`}>
+                    <h3 className="text-sm font-medium text-[#1e2643] hover:text-[#1e2643] transition-colors uppercase tracking-widest leading-snug">
                         {product.name}
                     </h3>
-
-                    <div className="flex items-center justify-center gap-3">
-                        {hasDiscount ? (
-                            <>
-                                <span className="text-[#1e2643] font-black text-lg">
-                                    {CURRENCY_SYMBOL}{product.discountPrice.toFixed(0)}
-                                </span>
-                                <span className="text-[#1e2643]/30 line-through text-sm">
-                                    {CURRENCY_SYMBOL}{product.price.toFixed(0)}
-                                </span>
-                            </>
-                        ) : (
-                            <span className="text-[#1e2643] font-black text-lg">
-                                {CURRENCY_SYMBOL}{product.price.toFixed(0)}
+                </Link>
+                <div className="flex items-center justify-center gap-3">
+                    {hasDiscount ? (
+                        <>
+                            <span className="text-[#1e2643] text-sm font-bold tracking-wider">
+                                ₹{discountPrice.toLocaleString()}
                             </span>
-                        )}
-                    </div>
+                            <span className="text-[#1e2643]/50 text-[13px] line-through tracking-wider">
+                                ₹{price.toLocaleString()}
+                            </span>
+                        </>
+                    ) : (
+                        <span className="text-[#1e2643] text-sm font-bold tracking-wider">
+                            ₹{price.toLocaleString()}
+                        </span>
+                    )}
                 </div>
             </div>
-        </Link>
+        </div>
     );
 }

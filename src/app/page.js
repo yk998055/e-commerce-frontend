@@ -8,6 +8,7 @@ import CollectionsGrid from '@/components/CollectionsGrid';
 import ProductCarousel from '@/components/ProductCarousel';
 import QuoteSection from '@/components/QuoteSection';
 import FeaturedCollection from '@/components/FeaturedCollection';
+import InstagramSection from '@/components/InstagramSection';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { FEATURED_TITLE } from '@/lib/constants';
 
@@ -63,7 +64,7 @@ export default function HomePage() {
         products={carouselProducts}
         loading={carouselLoading}
         error={error}
-        title="Featured Favorites"
+        title="Featured Collection"
         autoSlideInterval={2500}
       />
 
@@ -75,7 +76,7 @@ export default function HomePage() {
 
       <FeaturedCollection />
 
-      {/* Instagram/Social placeholder can go here */}
+      <InstagramSection />
     </div>
   );
 }

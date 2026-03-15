@@ -6,7 +6,6 @@ import Link from 'next/link';
 import api from '@/lib/axios';
 import ProductCard from '@/components/ProductCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { CURRENCY_SYMBOL } from '@/lib/constants';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
@@ -24,77 +23,85 @@ export default function ProductDetailPage() {
             setLoading(true);
             const res = await api.get(`/products/${id}`);
             const prod = res.data.data;
-            setProduct(prod);
-            setSelectedImage(0);
 
-            // Fetch related products
-            if (prod.category?.slug) {
-                const relRes = await api.get(`/products?category=${prod.category.slug}&limit=4`);
-                const relProducts = (relRes.data.data?.products || []).filter((p) => p._id !== prod._id);
-                setRelated(relProducts.slice(0, 4));
+            if (prod) {
+                setProduct(prod);
+                setSelectedImage(0);
+
+                // Fetch related products
+                if (prod.category?.slug) {
+                    const relRes = await api.get(`/products?category=${prod.category.slug}&limit=4`);
+                    const relProducts = (relRes.data.data?.products || []).filter((p) => p._id !== prod._id);
+                    setRelated(relProducts.slice(0, 4));
+                }
+            } else {
+                setProduct(null);
             }
         } catch (err) {
+            console.error('Error fetching product:', err);
             setProduct(null);
         } finally {
             setLoading(false);
         }
     };
 
-    if (loading) return <LoadingSpinner size="lg" text="Loading product..." />;
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center">
+            <LoadingSpinner size="lg" text="Bringing you the details..." />
+        </div>
+    );
 
     if (!product) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center">
-                <div className="text-center p-12 bg-[#FEE6A9] backdrop-blur-xl rounded-[3rem] border-4 border-[#1e2643] shadow-2xl">
-                    <h2 className="text-4xl font-black text-[#1e2643] mb-6 tracking-tight">Product Not Found</h2>
-                    <Link href="/" className="px-8 py-4 bg-[#1e2643] text-[#FEE6A1] rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#1e2643]/90 transition-all shadow-xl shadow-[#1e2643]/10">
-                        Back to Home
+            <div className="min-h-screen bg-white flex items-center justify-center pt-32">
+                <div className="text-center space-y-6">
+                    <h2 className="text-2xl font-light text-[#1e2643] serif uppercase tracking-widest">Piece Not Found</h2>
+                    <Link href="/products" className="inline-block px-10 py-4 bg-[#FEE6A9] text-[#1e2643] text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-all">
+                        Return to Collection
                     </Link>
                 </div>
             </div>
         );
     }
 
-    const hasDiscount = product.discountPrice && product.discountPrice < product.price;
-    const images = product.images?.length > 0 ? product.images : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800'];
+    const price = Number(product.price) || 0;
+    const discountPrice = Number(product.discountPrice) || 0;
+    const hasDiscount = discountPrice > 0 && discountPrice < price;
+    const images = Array.isArray(product.images) && product.images.length > 0
+        ? product.images
+        : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800'];
 
     return (
-        <div className="min-h-screen bg-white pt-32 pb-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-white pt-32 pb-24">
+            <div className="max-w-[1400px] mx-auto px-6">
+
                 {/* Breadcrumb */}
-                <nav className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-[#1e2643]/40 mb-12 ml-1">
-                    <Link href="/" className="hover:text-[#1e2643] transition-colors">Home</Link>
-                    <span className="text-[#1e2643]/20">/</span>
-                    {product.category?.name && (
-                        <>
-                            <Link href={`/products?category=${product.category.slug}`} className="hover:text-[#1e2643] transition-colors">
-                                {product.category.name}
-                            </Link>
-                            <span className="text-[#1e2643]/20">/</span>
-                        </>
-                    )}
+                <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#1e2643]/40 mb-12">
+                    <Link href="/" className="hover:text-[#1e2643]">Home</Link>
+                    <span>/</span>
+                    <Link href="/products" className="hover:text-[#1e2643]">Shop All</Link>
+                    <span>/</span>
                     <span className="text-[#1e2643]">{product.name}</span>
                 </nav>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 animate-fadeIn">
-                    {/* Image Gallery */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24">
+
+                    {/* Left: Image Gallery */}
                     <div className="space-y-6">
-                        <div className="aspect-square rounded-[2.5rem] overflow-hidden bg-white/50 border-4 border-[#1e2643] shadow-2xl shadow-[#1e2643]/10 group">
+                        <div className="aspect-[3/4] overflow-hidden bg-gray-50 group">
                             <img
                                 src={images[selectedImage]}
-                                alt={product.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                alt={product.name || 'Product Image'}
+                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                             />
                         </div>
                         {images.length > 1 && (
-                            <div className="flex gap-4 overflow-x-auto pb-4 px-1 scrollbar-hide">
+                            <div className="grid grid-cols-4 gap-4">
                                 {images.map((img, i) => (
                                     <button
                                         key={i}
                                         onClick={() => setSelectedImage(i)}
-                                        className={`w-24 h-24 rounded-2xl overflow-hidden border-4 shrink-0 transition-all duration-300 ${i === selectedImage
-                                            ? 'border-[#1e2643] shadow-xl scale-105'
-                                            : 'border-white/50 hover:border-[#1e2643]/30 hover:scale-105'
+                                        className={`aspect-[3/4] overflow-hidden border transition-all ${i === selectedImage ? 'border-[#FEE6A9]' : 'border-transparent opacity-60 hover:opacity-100'
                                             }`}
                                     >
                                         <img src={img} alt="" className="w-full h-full object-cover" />
@@ -102,90 +109,110 @@ export default function ProductDetailPage() {
                                 ))}
                             </div>
                         )}
-
-                        {/* Video Player */}
-                        {product.videoUrl && (
-                            <div className="rounded-[2rem] overflow-hidden border-4 border-[#1e2643] mt-8 shadow-xl bg-black">
-                                <video
-                                    controls
-                                    className="w-full"
-                                    poster={images[0]}
-                                >
-                                    <source src={product.videoUrl} type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                </video>
-                            </div>
-                        )}
                     </div>
 
-                    {/* Product Info */}
-                    <div className="flex flex-col">
-                        <div className="flex-1 space-y-8">
-                            <div>
-                                {product.category?.name && (
-                                    <span className="inline-block px-4 py-1.5 rounded-xl bg-[#1e2643] text-[#FEE6A1] text-[10px] font-black uppercase tracking-widest mb-6">
-                                        {product.category.name}
-                                    </span>
-                                )}
-                                <h1 className="text-5xl sm:text-6xl font-black text-[#1e2643] leading-tight tracking-tight mb-4">{product.name}</h1>
+                    {/* Right: Product Content */}
+                    <div className="flex flex-col space-y-10">
+                        <div className="space-y-4">
+                            <span className="text-[10px] font-bold text-[#1e2643]/70 uppercase tracking-[0.4em]">
+                                {product.category?.name || 'Exclusive Design'}
+                            </span>
+                            <h1 className="text-4xl md:text-5xl font-light text-[#1e2643] serif uppercase tracking-wide leading-tight">
+                                {product.name}
+                            </h1>
 
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-3 h-3 rounded-full ${product.stock > 0 ? 'bg-emerald-500' : 'bg-rose-500'} shadow-sm`} />
-                                    <span className={`text-xs font-black uppercase tracking-widest ${product.stock > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                        {product.stock > 0 ? `In Stock: ${product.stock} units` : 'Out of Stock'}
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Price */}
-                            <div className="p-8 rounded-[2rem] bg-[#FEE6A9] border-2 border-[#1e2643]/5 backdrop-blur-md">
-                                <div className="flex items-baseline gap-4 mb-2">
-                                    {hasDiscount ? (
-                                        <>
-                                            <span className="text-5xl font-black text-[#1e2643]">
-                                                {CURRENCY_SYMBOL}{product.discountPrice.toFixed(2)}
-                                            </span>
-                                            <span className="text-2xl text-[#1e2643]/30 line-through font-bold">
-                                                {CURRENCY_SYMBOL}{product.price.toFixed(2)}
-                                            </span>
-                                        </>
-                                    ) : (
-                                        <span className="text-5xl font-black text-[#1e2643]">
-                                            {CURRENCY_SYMBOL}{product.price.toFixed(2)}
+                            <div className="flex items-baseline gap-4 pt-4">
+                                {hasDiscount ? (
+                                    <>
+                                        <span className="text-2xl font-bold text-[#1e2643] tracking-wider">
+                                            ₹{discountPrice.toLocaleString()}
                                         </span>
-                                    )}
-                                </div>
-                                {hasDiscount && (
-                                    <span className="inline-block px-3 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest border border-emerald-200">
-                                        Save {Math.round(((product.price - product.discountPrice) / product.price) * 100)}% Today
+                                        <span className="text-lg text-[#1e2643]/30 line-through tracking-wider">
+                                            ₹{price.toLocaleString()}
+                                        </span>
+                                    </>
+                                ) : (
+                                    <span className="text-2xl font-bold text-[#1e2643] tracking-wider">
+                                        ₹{price.toLocaleString()}
                                     </span>
                                 )}
                             </div>
+                            <p className="text-[10px] text-[#1e2643]/40 font-medium uppercase tracking-widest italic pt-1">
+                                (Prices inclusive of all taxes)
+                            </p>
+                        </div>
 
-                            {/* Actions - Coming Soon or Add to Cart if implemented */}
-                            <button className="w-full py-6 rounded-[2rem] bg-[#1e2643] text-[#FEE6A1] font-black text-sm uppercase tracking-[0.2em] transition-all shadow-2xl shadow-[#1e2643]/20 hover:scale-[1.02] active:scale-95">
-                                Add to Shopping Bag
-                            </button>
+                        {/* Actions */}
+                        <div className="space-y-6">
+                            <div className="flex flex-col gap-4">
+                                <button
+                                    disabled={!product.stock || product.stock <= 0}
+                                    className={`w-full py-5 text-[11px] font-bold uppercase tracking-[0.3em] transition-all ${product.stock > 0
+                                        ? 'bg-[#FEE6A9] text-[#1e2643] hover:bg-[#1e2643] hover:text-white shadow-xl'
+                                        : 'bg-gray-100 text-[#1e2643]/40 cursor-not-allowed'
+                                        }`}
+                                >
+                                    {product.stock > 0 ? 'Add to Shopping Bag' : 'Out of Stock'}
+                                </button>
+                                <button className="w-full py-5 border border-[#1e2643]/20 text-[#1e2643] text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-[#1e2643]/5 transition-colors">
+                                    Wishlist
+                                </button>
+                            </div>
+                        </div>
 
-                            {/* Description */}
-                            <div className="pt-10 border-t-2 border-[#1e2643]/5">
-                                <h3 className="text-xs font-black text-[#1e2643]/30 uppercase tracking-[0.2em] mb-4">The Details</h3>
-                                <p className="text-[#1e2643]/70 leading-relaxed font-bold text-lg whitespace-pre-line">
-                                    {product.description || "No description available for this premium item."}
+                        {/* Description & Specs */}
+                        <div className="border-t border-[#1e2643]/5 pt-10 space-y-10">
+                            <div className="space-y-4">
+                                <h3 className="text-[10px] font-bold text-[#1e2643] uppercase tracking-[0.4em]">Details</h3>
+                                <p className="text-[#1e2643]/70 leading-relaxed text-sm serif italic">
+                                    {product.description || "Every stitch in this piece tells a tale of traditional Indian artistry, designed to be a timeless addition to your wardrobe."}
                                 </p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-x-12 gap-y-8">
+                                {product.fabric && (
+                                    <div className="space-y-1">
+                                        <span className="text-[9px] font-bold text-[#1e2643]/40 uppercase tracking-widest">Fabric</span>
+                                        <p className="text-xs font-medium text-[#1e2643] uppercase tracking-wider">{product.fabric}</p>
+                                    </div>
+                                )}
+                                {Array.isArray(product.sizes) && product.sizes.length > 0 && (
+                                    <div className="space-y-1">
+                                        <span className="text-[9px] font-bold text-[#1e2643]/40 uppercase tracking-widest">Available Sizes</span>
+                                        <div className="flex flex-wrap gap-2">
+                                            {product.sizes.map(size => (
+                                                <span key={size} className="text-[10px] font-medium text-[#1e2643] uppercase border border-[#1e2643]/5 px-2 py-1">{size}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="space-y-1">
+                                    <span className="text-[9px] font-bold text-[#1e2643]/40 uppercase tracking-widest">Stock Status</span>
+                                    <p className={`text-xs font-bold uppercase tracking-wider ${product.stock > 0 ? 'text-[#1e2643]/60' : 'text-[#1e2643]/40'}`}>
+                                        {product.stock > 0 ? 'Available' : 'Currently Unavailable'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Free Shipping Badge */}
+                        <div className="bg-gray-50 p-6 flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <svg className="w-6 h-6 text-[#1e2643]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#1e2643]">Free Shipping in India</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Related Products */}
-                {related.length > 0 && (
-                    <section className="mt-32 pt-20 border-t-4 border-[#1e2643]">
-                        <div className="flex items-center justify-between mb-12">
-                            <h2 className="text-4xl font-black text-[#1e2643] tracking-tight">You May Also Like</h2>
-                            <Link href="/products" className="text-xs font-black uppercase tracking-widest text-[#1e2643] border-b-2 border-[#1e2643] pb-1 hover:text-[#1e2643]/60 hover:border-[#1e2643]/60 transition-all">
-                                View Collection
-                            </Link>
+                {Array.isArray(related) && related.length > 0 && (
+                    <section className="mt-32 pt-24 border-t border-[#1e2643]/5">
+                        <div className="text-center mb-16 space-y-4">
+                            <span className="text-[10px] font-bold text-[#1e2643]/70 uppercase tracking-[0.4em]">Handpicked</span>
+                            <h2 className="text-3xl font-light text-[#1e2643] serif uppercase tracking-widest">You May Also Like</h2>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                             {related.map((p) => (

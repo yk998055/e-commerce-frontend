@@ -40,7 +40,7 @@ export default function ProductSlider({ products, title }) {
     };
 
     return (
-        <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 group">
+        <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 group overflow-hidden">
             <div className="text-center mb-12">
                 <h2 className="text-4xl sm:text-5xl font-black text-[#1e2643] mb-4 tracking-tight">{title}</h2>
                 <div className="w-24 h-2 bg-[#1e2643] mx-auto rounded-full" />

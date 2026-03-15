@@ -35,11 +35,11 @@ export default function CollectionsGrid() {
                             />
 
                             {/* Overlay */}
-                            <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors duration-500" />
+                            <div className="absolute inset-0 bg-white/40 group-hover:bg-white/60 transition-colors duration-500" />
 
                             {/* Content */}
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6">
-                                <h3 className="text-3xl md:text-4xl font-light mb-8 serif tracking-wide text-center drop-shadow-md">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-[#1e2643] p-6">
+                                <h3 className="text-3xl md:text-4xl font-light mb-8 serif tracking-wide text-center">
                                     {item.title}
                                 </h3>
 

@@ -5,12 +5,30 @@ import Footer from '@/components/Footer';
 import FloatingActions from '@/components/FloatingActions';
 
 export const metadata = {
-  title: 'CHHAAPAYA — Heritage & Luxury Crafts',
-  description: 'Discover the timeless beauty of hand-blocked textiles and artisan heritage crafts at CHHAAPAYA.',
-  icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
-  }
+    title: 'CHHAAPAYA — Premium Indian Handcrafted Clothing',
+    description: 'Shop authentic Indian handcrafted sarees, kurtas, sherwanis and more. Premium quality ethnic wear delivered across India.',
+    keywords: 'sarees, kurtas, indian clothing, handcrafted, ethnic wear, banarasi silk, chhaapaya',
+    openGraph: {
+        title: 'CHHAAPAYA — Premium Indian Handcrafted Clothing',
+        description: 'Shop authentic Indian handcrafted sarees, kurtas, sherwanis and more.',
+        url: 'https://chhaapaya.com',
+        siteName: 'CHHAAPAYA',
+        images: [
+            {
+                url: 'https://chhaapaya.com/chhaapaya-logo-circle.svg',
+                width: 800,
+                height: 600,
+            }
+        ],
+        locale: 'en_IN',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'CHHAAPAYA — Premium Indian Handcrafted Clothing',
+        description: 'Shop authentic Indian handcrafted sarees, kurtas, sherwanis and more.',
+        images: ['https://chhaapaya.com/chhaapaya-logo-circle.svg'],
+    },
 };
 
 export default function RootLayout({ children }) {
