@@ -6,13 +6,16 @@ import Link from 'next/link';
 import api from '@/lib/axios';
 import ProductCard from '@/components/ProductCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useCart } from '@/context/CartContext';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [related, setRelated] = useState([]);
     const [selectedImage, setSelectedImage] = useState(0);
+    const [selectedSize, setSelectedSize] = useState('');
     const [loading, setLoading] = useState(true);
+    const { addToCart, openCart } = useCart();
 
     useEffect(() => {
         if (id) fetchProduct();
@@ -46,14 +49,14 @@ export default function ProductDetailPage() {
     };
 
     if (loading) return (
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center pt-36 lg:pt-40">
             <LoadingSpinner size="lg" text="Bringing you the details..." />
         </div>
     );
 
     if (!product) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center pt-32">
+            <div className="min-h-screen bg-white flex items-center justify-center pt-36 lg:pt-40">
                 <div className="text-center space-y-6">
                     <h2 className="text-2xl font-light text-[#1e2643] serif uppercase tracking-widest">Piece Not Found</h2>
                     <Link href="/products" className="inline-block px-10 py-4 bg-[#FEE6A9] text-[#1e2643] text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-all">
@@ -72,7 +75,7 @@ export default function ProductDetailPage() {
         : ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800'];
 
     return (
-        <div className="min-h-screen bg-white pt-32 pb-24">
+        <div className="min-h-screen bg-white pt-36 lg:pt-40 pb-24">
             <div className="max-w-[1400px] mx-auto px-6">
 
                 {/* Breadcrumb */}
@@ -142,22 +145,58 @@ export default function ProductDetailPage() {
                             </p>
                         </div>
 
-                        {/* Actions */}
-                        <div className="space-y-6">
-                            <div className="flex flex-col gap-4">
-                                <button
-                                    disabled={!product.stock || product.stock <= 0}
-                                    className={`w-full py-5 text-[11px] font-bold uppercase tracking-[0.3em] transition-all ${product.stock > 0
-                                        ? 'bg-[#FEE6A9] text-[#1e2643] hover:bg-[#1e2643] hover:text-white shadow-xl'
-                                        : 'bg-gray-100 text-[#1e2643]/40 cursor-not-allowed'
-                                        }`}
-                                >
-                                    {product.stock > 0 ? 'Add to Shopping Bag' : 'Out of Stock'}
-                                </button>
-                                <button className="w-full py-5 border border-[#1e2643]/20 text-[#1e2643] text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-[#1e2643]/5 transition-colors">
-                                    Wishlist
-                                </button>
+                        {/* Size Picker */}
+                        {Array.isArray(product.sizes) && product.sizes.length > 0 && (
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-bold text-[#1e2643] uppercase tracking-[0.3em]">Select Size</span>
+                                    {!selectedSize && (
+                                        <span className="text-[9px] text-[#1e2643]/40 italic">Required</span>
+                                    )}
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {product.sizes.map(size => (
+                                        <button
+                                            key={size}
+                                            onClick={() => setSelectedSize(size)}
+                                            className={`text-[10px] font-semibold uppercase tracking-wider border px-4 py-2.5 transition-all ${selectedSize === size
+                                                    ? 'bg-[#1e2643] text-white border-[#1e2643]'
+                                                    : 'border-[#1e2643]/20 text-[#1e2643] hover:border-[#1e2643]/60'
+                                                }`}
+                                        >
+                                            {size}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
+                        )}
+
+                        {/* Actions */}
+                        <div className="space-y-4">
+                            <button
+                                disabled={!product.stock || product.stock <= 0 || (product.sizes?.length > 0 && !selectedSize)}
+                                onClick={() => {
+                                    if (product.stock > 0 && (product.sizes?.length === 0 || selectedSize)) {
+                                        addToCart(product, { size: selectedSize, quantity: 1 });
+                                        openCart();
+                                    }
+                                }}
+                                className={`w-full py-5 text-[11px] font-bold uppercase tracking-[0.3em] transition-all ${product.stock > 0 && (product.sizes?.length === 0 || selectedSize)
+                                        ? 'bg-[#FEE6A9] text-[#1e2643] hover:bg-[#1e2643] hover:text-white shadow-md'
+                                        : 'bg-gray-100 text-[#1e2643]/40 cursor-not-allowed'
+                                    }`}
+                            >
+                                {product.stock > 0
+                                    ? product.sizes?.length > 0 && !selectedSize
+                                        ? 'Select a Size'
+                                        : 'Add to Shopping Bag'
+                                    : 'Out of Stock'
+                                }
+                            </button>
+                            <button className="w-full py-4 border border-[#1e2643]/15 text-[#1e2643] text-[11px] font-semibold uppercase tracking-[0.3em] hover:bg-[#1e2643]/5 transition-colors flex items-center justify-center gap-3">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                                Save to Wishlist
+                            </button>
                         </div>
 
                         {/* Description & Specs */}

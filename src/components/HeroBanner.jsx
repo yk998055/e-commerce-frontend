@@ -5,21 +5,31 @@ import Link from 'next/link';
 
 const slides = [
     {
-        id: 'heritage',
-        image: 'https://images.unsplash.com/photo-1595991209266-5ff5a3a2f008?w=1600',
-        title: 'CHHAAPAYA',
-        subtitle: 'heritage | 2024',
-        cta: 'EXPLORE NOW',
-        link: '/products'
+        id: 'clothing',
+        image: 'https://images.pexels.com/photos/2220316/pexels-photo-2220316.jpeg?auto=compress&cs=tinysrgb&w=1600',
+        subtitle: 'New Season',
+        title: 'CLOTHING',
+        cta: 'SHOP CLOTHING',
+        link: '/products?category=clothing',
     },
     {
         id: 'festive',
-        image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=2070&auto=format&fit=crop',
-        subtitle: 'New Collection',
+        image: 'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=1600',
+        subtitle: 'Celebrate in Style',
         title: 'FESTIVE EDIT',
-        link: '/products?category=Festive'
+        cta: 'SHOP FESTIVE',
+        link: '/products?category=festive',
+    },
+    {
+        id: 'new',
+        image: 'https://images.pexels.com/photos/3622608/pexels-photo-3622608.jpeg?auto=compress&cs=tinysrgb&w=1600',
+        subtitle: 'Just Arrived',
+        title: 'NEW COLLECTION',
+        cta: 'VIEW NEW ARRIVALS',
+        link: '/products?category=new-collection',
     },
 ];
+
 
 export default function HeroBanner() {
     const [currentSlide, setCurrentSlide] = useState(0);

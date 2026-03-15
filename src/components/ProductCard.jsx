@@ -19,12 +19,12 @@ export default function ProductCard({ product }) {
         : 0;
 
     return (
-        <div className="group flex flex-col items-center text-center">
+        <Link
+            href={`/products/${product._id}`}
+            className="group block flex flex-col items-center text-center transition-transform duration-700 hover:scale-[1.02]"
+        >
             {/* Image Container */}
-            <Link
-                href={`/products/${product._id}`}
-                className="relative w-full aspect-[3/4] overflow-hidden bg-gray-50 mb-6"
-            >
+            <div className="relative w-full aspect-[3/4] overflow-hidden bg-gray-50 mb-6">
                 <img
                     src={mainImage}
                     alt={product.name || 'Product'}
@@ -51,22 +51,13 @@ export default function ProductCard({ product }) {
                         </span>
                     )}
                 </div>
-
-                {/* Quick Add Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-20">
-                    <button className="w-full bg-white text-[#1e2643] py-3 text-[10px] font-bold uppercase tracking-widest shadow-xl hover:bg-[#FEE6A9] hover:text-[#1e2643] transition-colors">
-                        Quick Add
-                    </button>
-                </div>
-            </Link>
+            </div>
 
             {/* Product Info */}
             <div className="space-y-2 px-2">
-                <Link href={`/products/${product._id}`}>
-                    <h3 className="text-sm font-medium text-[#1e2643] hover:text-[#1e2643] transition-colors uppercase tracking-widest leading-snug">
-                        {product.name}
-                    </h3>
-                </Link>
+                <h3 className="text-sm font-medium text-[#1e2643] uppercase tracking-widest leading-snug">
+                    {product.name}
+                </h3>
                 <div className="flex items-center justify-center gap-3">
                     {hasDiscount ? (
                         <>
@@ -84,6 +75,6 @@ export default function ProductCard({ product }) {
                     )}
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

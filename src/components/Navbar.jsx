@@ -4,11 +4,18 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartContext';
+import api from '@/lib/axios';
 
 export default function Navbar() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchLoading, setSearchLoading] = useState(false);
     const { isAuthenticated } = useAuth();
+    const { openCart } = useCart();
     const router = useRouter();
 
     useEffect(() => {
@@ -19,6 +26,39 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Live Search Logic (Debounced)
+    useEffect(() => {
+        if (!searchQuery.trim()) {
+            setSearchResults([]);
+            return;
+        }
+
+        const timer = setTimeout(async () => {
+            setSearchLoading(true);
+            try {
+                // Fetch top 6 results for preview
+                const res = await api.get(`/products?search=${encodeURIComponent(searchQuery)}&limit=6`);
+                setSearchResults(res.data.data?.products || []);
+            } catch (err) {
+                console.error('Search error:', err);
+                setSearchResults([]);
+            } finally {
+                setSearchLoading(false);
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    const handleSearch = (e) => {
+        if (e) e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchOpen(false);
+            setSearchQuery('');
+        }
+    };
+
     const handleProtectedClick = (href) => {
         if (isAuthenticated) {
             router.push(href);
@@ -28,16 +68,120 @@ export default function Navbar() {
     };
 
     const navLinks = [
-        { name: 'Clothing', href: '/products?category=Clothing' },
-        { name: 'Festive', href: '/products?category=Festive' },
-        { name: 'New Collection', href: '/products?category=New' },
-        { name: 'Gifting', href: '/products?category=Gifting' },
-        { name: 'Sale', href: '/products?category=Sale' },
-        { name: 'Women\'s wear', href: '/products?category=Womenswear' },
+        { name: 'Clothing', href: '/products?category=clothing' },
+        { name: 'Festive', href: '/products?category=festive' },
+        { name: 'New Collection', href: '/products?category=new-collection' },
+        { name: 'Gifting', href: '/products?category=gifting' },
+        { name: 'Sale', href: '/products?category=sale' },
+        { name: "Women's wear", href: '/products?category=womenswear' },
     ];
 
     return (
         <header className={`fixed top-0 z-50 w-full transition-all duration-300 bg-white ${scrolled ? 'shadow-sm' : ''}`}>
+            {/* ─── LIVE SEARCH OVERLAY ─────────────────────────────────── */}
+            <div
+                className={`fixed inset-x-0 top-0 bg-white z-[70] transition-all duration-500 ease-in-out border-b border-[#1e2643]/10 overflow-hidden ${searchOpen ? 'h-[500px] visible opacity-100' : 'h-0 invisible opacity-0'
+                    }`}
+            >
+                <div className="max-w-7xl mx-auto px-6 h-full py-10 flex flex-col">
+                    {/* Search Input Area */}
+                    <div className="flex items-center justify-between pb-8 border-b border-[#1e2643]/10">
+                        <div className="flex items-center flex-1 max-w-3xl">
+                            <svg className="w-6 h-6 text-[#1e2643]/30 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                            </svg>
+                            <form onSubmit={handleSearch} className="w-full">
+                                <input
+                                    type="text"
+                                    placeholder="SEARCH OUR COLLECTIONS..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="bg-transparent border-none focus:outline-none w-full text-[20px] font-light tracking-wide text-[#1e2643] placeholder:text-[#1e2643]/20 serif italic"
+                                    autoFocus={searchOpen}
+                                />
+                            </form>
+                        </div>
+                        <button
+                            onClick={() => setSearchOpen(false)}
+                            className="p-2 text-[#1e2643] hover:rotate-90 transition-all duration-300"
+                        >
+                            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {/* Results Preview Area */}
+                    <div className="flex-1 overflow-y-auto mt-8 hidden-scrollbar">
+                        <div className="flex flex-col md:flex-row gap-12">
+                            {/* Left: Product Results */}
+                            <div className="flex-1">
+                                <div className="flex items-center justify-between mb-8">
+                                    <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#1e2643]/40">
+                                        {searchQuery ? `${searchResults.length} results` : 'Suggested products'}
+                                    </h3>
+                                    {searchQuery && (
+                                        <button
+                                            onClick={handleSearch}
+                                            className="text-[11px] uppercase tracking-widest text-[#1e2643] border-b border-[#1e2643] hover:opacity-50 transition-all"
+                                        >
+                                            View all
+                                        </button>
+                                    )}
+                                </div>
+
+                                {searchLoading ? (
+                                    <div className="flex justify-center py-10">
+                                        <div className="w-8 h-8 border-2 border-[#1e2643]/20 border-t-[#1e2643] rounded-full animate-spin" />
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+                                        {searchResults.map((prod) => (
+                                            <Link
+                                                key={prod._id}
+                                                href={`/products/${prod._id}`}
+                                                onClick={() => setSearchOpen(false)}
+                                                className="group"
+                                            >
+                                                <div className="aspect-[3/4] overflow-hidden bg-gray-50 mb-3 relative">
+                                                    <img
+                                                        src={prod.images[0]}
+                                                        alt={prod.name}
+                                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                    />
+                                                </div>
+                                                <p className="text-[11px] font-medium text-[#1e2643] line-clamp-1 group-hover:opacity-60 transition-opacity">
+                                                    {prod.name}
+                                                </p>
+                                                <p className="text-[11px] text-[#1e2643]/50 mt-1">
+                                                    ₹{prod.effectivePrice}
+                                                </p>
+                                            </Link>
+                                        ))}
+                                        {!searchQuery && !searchLoading && (
+                                            <p className="text-[13px] text-[#1e2643]/30 serif italic pb-10">Start typing to see results...</p>
+                                        )}
+                                        {searchQuery && searchResults.length === 0 && !searchLoading && (
+                                            <p className="text-[13px] text-[#1e2643]/30 serif italic pb-10">No products could be found</p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Right: Pages & Journal sidebar */}
+                            <div className="w-full md:w-[240px] border-l border-[#1e2643]/5 pl-12 hidden lg:block">
+                                <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[#1e2643]/40 mb-8 font-inter">
+                                    Pages & Journal
+                                </h3>
+                                <p className="text-[13px] text-[#1e2643]/30 serif italic">
+                                    No results could be found
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Announcement Bar */}
             <div className={`w-full bg-[#FEE6A9] text-[#1e2643] flex justify-center items-center overflow-hidden transition-all duration-300 ${scrolled ? 'h-0 opacity-0' : 'h-8 opacity-100'}`}>
                 <p className={`text-[9px] sm:text-[10px] font-medium tracking-[0.2em] uppercase transition-opacity duration-300 ${scrolled ? 'opacity-0' : 'opacity-100'}`}>
@@ -48,9 +192,7 @@ export default function Navbar() {
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div className="flex items-center justify-between relative h-10 md:h-12">
 
-                    {/* Left: Hamburger & Desktop Links? BAGH has hamburger on desktop too? No, usually icons. 
-                        Looking at screenshot: Hamburger is on left, Logo in center, Icons on right. 
-                    */}
+                    {/* Left: Hamburger & Desktop Links */}
                     <div className="flex items-center">
                         {/* Mobile Hamburger */}
                         <button
@@ -74,7 +216,7 @@ export default function Navbar() {
 
                     {/* Right: Icons */}
                     <div className="flex items-center gap-2 md:gap-4 ml-auto lg:ml-0">
-                        <button className="p-2 text-[#1e2643] hover:opacity-70 transition-opacity hidden sm:block">
+                        <button onClick={() => setSearchOpen(true)} className="p-2 text-[#1e2643] hover:opacity-70 transition-opacity hidden sm:block">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                             </svg>
@@ -88,8 +230,9 @@ export default function Navbar() {
                             </svg>
                         </button>
                         <button
-                            onClick={() => handleProtectedClick('/cart')}
-                            className="p-2 text-[#1e2643] hover:opacity-70 transition-opacity"
+                            onClick={openCart}
+                            className="p-2 text-[#1e2643] hover:opacity-70 transition-opacity relative"
+                            aria-label="Open cart"
                         >
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />

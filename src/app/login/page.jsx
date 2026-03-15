@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { LOGIN_TITLE, LOGIN_SUBTITLE } from '@/lib/constants';
 
@@ -12,12 +12,18 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const { login, isAuthenticated, loading: authLoading } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect') || '';
 
     useEffect(() => {
         if (!authLoading && isAuthenticated) {
-            router.push('/admin');
+            if (redirectTo && redirectTo.startsWith('/')) {
+                router.push(redirectTo);
+            } else {
+                router.push('/admin');
+            }
         }
-    }, [authLoading, isAuthenticated, router]);
+    }, [authLoading, isAuthenticated, router, redirectTo]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,8 +32,10 @@ export default function LoginPage() {
 
         try {
             const data = await login(email, password);
-            if (data.data.user.role === 'admin') {
+            if (data.data.user.role === 'admin' && !redirectTo) {
                 router.push('/admin');
+            } else if (redirectTo && redirectTo.startsWith('/')) {
+                router.push(redirectTo);
             } else {
                 router.push('/');
             }
