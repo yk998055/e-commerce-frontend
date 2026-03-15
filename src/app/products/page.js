@@ -55,6 +55,15 @@ function ProductsContent() {
         if (search) params.set('search', search);
         params.set('page', pageNum);
         params.set('limit', 12);
+
+        // Ensure no Next.js internal params leak into our backend API
+        params.delete('_rsc');
+        params.delete('nxtP');
+
+        // We use a relative path. If the baseURL in axios.js is correctly set to '.../api',
+        // then '/products' will hit '.../api/products'.
+        // However, to be extra safe and match the local manual test '.../api/products',
+        // we'll use '/products' and rely on the baseURL.
         return `/products?${params.toString()}`;
     }, [activeCategory, activeSubcategory, activeSizes, minPrice, maxPrice, sort, search]);
 
@@ -289,49 +298,49 @@ function ProductsContent() {
 
                             {/* Toolbar */}
                             <div className="flex justify-between items-center mb-6 pb-3 border-b border-[#1e2643]/8">
-                            {/* Grid toggles */}
-                            <div className="flex gap-3 opacity-25">
-                                <button className="p-1">
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M4 4h4v4H4zM10 4h4v4h-4zM16 4h4v4h-4zM4 10h4v4H4zM10 10h4v4h-4zM16 10h4v4h-4zM4 16h4v4H4zM10 16h4v4h-4zM16 16h4v4h-4z" />
-                                    </svg>
-                                </button>
-                                <button className="p-1">
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" />
-                                    </svg>
-                                </button>
-                            </div>
+                                {/* Grid toggles */}
+                                <div className="flex gap-3 opacity-25">
+                                    <button className="p-1">
+                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M4 4h4v4H4zM10 4h4v4h-4zM16 4h4v4h-4zM4 10h4v4H4zM10 10h4v4h-4zM16 10h4v4h-4zM4 16h4v4H4zM10 16h4v4h-4zM16 16h4v4h-4z" />
+                                        </svg>
+                                    </button>
+                                    <button className="p-1">
+                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" />
+                                        </svg>
+                                    </button>
+                                </div>
 
-                            {/* Sort Dropdown */}
-                            <div className="relative">
-                                <button
-                                    onClick={() => setSortOpen(o => !o)}
-                                    className="flex items-center gap-2 text-[11px] text-[#1e2643] tracking-wider uppercase hover:text-[#1e2643]/60 transition-colors"
-                                >
-                                    {currentSortLabel}
-                                    <svg className={`w-3 h-3 transition-transform ${sortOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </button>
-                                {sortOpen && (
-                                    <div className="absolute right-0 top-full mt-2 bg-white border border-[#1e2643]/10 z-30 min-w-[180px] shadow-lg">
-                                        {SORT_OPTIONS.map(opt => (
-                                            <button
-                                                key={opt.value}
-                                                onClick={() => { setSort(opt.value); setSortOpen(false); }}
-                                                className={`block w-full text-left px-4 py-3 text-[11px] tracking-wider uppercase transition-colors ${sort === opt.value
-                                                    ? 'bg-[#1e2643] text-white'
-                                                    : 'text-[#1e2643] hover:bg-[#1e2643]/5'
-                                                    }`}
-                                            >
-                                                {opt.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
+                                {/* Sort Dropdown */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setSortOpen(o => !o)}
+                                        className="flex items-center gap-2 text-[11px] text-[#1e2643] tracking-wider uppercase hover:text-[#1e2643]/60 transition-colors"
+                                    >
+                                        {currentSortLabel}
+                                        <svg className={`w-3 h-3 transition-transform ${sortOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                    {sortOpen && (
+                                        <div className="absolute right-0 top-full mt-2 bg-white border border-[#1e2643]/10 z-30 min-w-[180px] shadow-lg">
+                                            {SORT_OPTIONS.map(opt => (
+                                                <button
+                                                    key={opt.value}
+                                                    onClick={() => { setSort(opt.value); setSortOpen(false); }}
+                                                    className={`block w-full text-left px-4 py-3 text-[11px] tracking-wider uppercase transition-colors ${sort === opt.value
+                                                        ? 'bg-[#1e2643] text-white'
+                                                        : 'text-[#1e2643] hover:bg-[#1e2643]/5'
+                                                        }`}
+                                                >
+                                                    {opt.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
 
                             {/* Active filter chips */}
                             {(activeSizes.length > 0 || activeSubcategory) && (
@@ -360,55 +369,55 @@ function ProductsContent() {
 
                         {/* Scrollable products only */}
                         <div className="flex-1 min-h-0 overflow-y-auto hidden-scrollbar pb-32">
-                        {/* Products */}
-                        {loading && products.length === 0 ? (
-                            <div className="py-24 text-center">
-                                <LoadingSpinner size="lg" text="Curating your selection..." />
-                            </div>
-                        ) : products.length > 0 ? (
-                            <>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14">
-                                    {products.map((p, index) => {
-                                        const isLast = products.length === index + 1;
-                                        return (
-                                            <div ref={isLast ? lastProductRef : null} key={`${p._id ?? 'product'}-${index}`}>
-                                                <ProductCard product={p} />
-                                            </div>
-                                        );
-                                    })}
+                            {/* Products */}
+                            {loading && products.length === 0 ? (
+                                <div className="py-24 text-center">
+                                    <LoadingSpinner size="lg" text="Curating your selection..." />
                                 </div>
-
-                                {loadingMore && (
-                                    <div className="mt-16 py-10 flex justify-center border-t border-[#1e2643]/5">
-                                        <LoadingSpinner size="md" text="Loading more..." />
+                            ) : products.length > 0 ? (
+                                <>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14">
+                                        {products.map((p, index) => {
+                                            const isLast = products.length === index + 1;
+                                            return (
+                                                <div ref={isLast ? lastProductRef : null} key={`${p._id ?? 'product'}-${index}`}>
+                                                    <ProductCard product={p} />
+                                                </div>
+                                            );
+                                        })}
                                     </div>
-                                )}
 
-                                {!hasMore && products.length > 0 && (
-                                    <div className="mt-20 py-10 text-center border-t border-[#1e2643]/5">
-                                        <p className="text-[#1e2643]/25 text-[10px] font-semibold uppercase tracking-[0.4em]">
-                                            End of collection
-                                        </p>
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <div className="py-32 flex flex-col items-center justify-center text-center space-y-5">
-                                <span className="text-3xl">✿</span>
-                                <h3 className="text-lg font-light text-[#1e2643] serif uppercase tracking-widest">
-                                    No pieces found
-                                </h3>
-                                <p className="text-[#1e2643]/40 text-sm serif italic max-w-sm">
-                                    Try adjusting your filters or browse all our collections.
-                                </p>
-                                <button
-                                    onClick={resetFilters}
-                                    className="mt-4 text-[10px] tracking-[0.3em] uppercase border border-[#1e2643]/20 py-2.5 px-8 text-[#1e2643] hover:bg-[#1e2643] hover:text-white transition-all"
-                                >
-                                    Clear filters
-                                </button>
-                            </div>
-                        )}
+                                    {loadingMore && (
+                                        <div className="mt-16 py-10 flex justify-center border-t border-[#1e2643]/5">
+                                            <LoadingSpinner size="md" text="Loading more..." />
+                                        </div>
+                                    )}
+
+                                    {!hasMore && products.length > 0 && (
+                                        <div className="mt-20 py-10 text-center border-t border-[#1e2643]/5">
+                                            <p className="text-[#1e2643]/25 text-[10px] font-semibold uppercase tracking-[0.4em]">
+                                                End of collection
+                                            </p>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="py-32 flex flex-col items-center justify-center text-center space-y-5">
+                                    <span className="text-3xl">✿</span>
+                                    <h3 className="text-lg font-light text-[#1e2643] serif uppercase tracking-widest">
+                                        No pieces found
+                                    </h3>
+                                    <p className="text-[#1e2643]/40 text-sm serif italic max-w-sm">
+                                        Try adjusting your filters or browse all our collections.
+                                    </p>
+                                    <button
+                                        onClick={resetFilters}
+                                        className="mt-4 text-[10px] tracking-[0.3em] uppercase border border-[#1e2643]/20 py-2.5 px-8 text-[#1e2643] hover:bg-[#1e2643] hover:text-white transition-all"
+                                    >
+                                        Clear filters
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
